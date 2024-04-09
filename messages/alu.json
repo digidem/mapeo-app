@@ -1,4 +1,8 @@
 {
+  "hooks.updateNotifier.dialogOK": {
+    "description": "Button label to dismiss dialog shown to the user when Mapeo is updated",
+    "message": "E Rete"
+  },
   "screens.CategoryChooser.categoryTitle": {
     "description": "Title for category chooser screen",
     "message": "I ta ka rau"
