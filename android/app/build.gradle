@@ -124,7 +124,7 @@ def enableSeparateBuildPerCPUArchitecture = false
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore.
@@ -282,6 +282,7 @@ android {
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds
+            shrinkResources true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
             ndk {
@@ -295,6 +296,8 @@ android {
             ndk {
                 abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
             }
+            // Detox-specific additions to pro-guard
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
         }
         // Build type for intel devices (chromebooks and rare phones)
         intel {
