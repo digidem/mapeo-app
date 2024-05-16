@@ -47,6 +47,10 @@
     "description": "Label for Android version",
     "message": "Android version"
   },
+  "screens.AboutMapeo.deviceId": {
+    "description": "Label for device ID",
+    "message": "Device ID"
+  },
   "screens.AboutMapeo.mapeoBuild": {
     "description": "Label for Mapeo build number",
     "message": "Mapeo build"

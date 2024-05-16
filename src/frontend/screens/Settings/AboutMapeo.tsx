@@ -1,10 +1,10 @@
-// @flow
-import React from "react";
+import * as React from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { defineMessages, useIntl } from "react-intl";
 
 import { List, ListItem, ListItemText } from "../../sharedComponents/List";
 import useDeviceInfo from "../../hooks/useDeviceInfo";
+import useDeviceId from "../../hooks/useDeviceId";
 
 const m = defineMessages({
   aboutMapeoTitle: {
@@ -48,14 +48,19 @@ const m = defineMessages({
     defaultMessage: "Unknown",
     description: "Shown when a device info (e.g. version number) is unknown",
   },
+  deviceId: {
+    id: "screens.AboutMapeo.deviceId",
+    defaultMessage: "Device ID",
+    description: "Label for device ID",
+  },
 });
 
 const DeviceInfoListItem = ({
   label,
   deviceProp,
 }: {
-  label: string,
-  deviceProp: string,
+  label: string;
+  deviceProp: string;
 }) => {
   const { formatMessage } = useIntl();
   const { value, state } = useDeviceInfo(deviceProp);
@@ -74,7 +79,8 @@ const DeviceInfoListItem = ({
 
 const AboutMapeo = () => {
   const { formatMessage: t } = useIntl();
-
+  const deviceId = useDeviceId();
+  const displayDeviceId = deviceId ? deviceId.slice(0, 7) : t(m.unknown);
   return (
     <ScrollView>
       <List>
@@ -87,6 +93,13 @@ const AboutMapeo = () => {
         />
         <DeviceInfoListItem label={t(m.androidBuild)} deviceProp="buildId" />
         <DeviceInfoListItem label={t(m.phoneModel)} deviceProp="model" />
+        <DeviceInfoListItem label={t(m.deviceId)} deviceProp="deviceId" />
+        <ListItem>
+          <ListItemText
+            primary={t(m.deviceId)}
+            secondary={displayDeviceId}
+          ></ListItemText>
+        </ListItem>
       </List>
     </ScrollView>
   );
