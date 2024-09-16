@@ -106,7 +106,9 @@ export const ProjectInviteModal = ({
 }: NativeRootNavigationProps<"ProjectInviteModal">) => {
   const { formatMessage: t } = useIntl();
   const isMounted = useIsMounted();
-  const { sheetRef, closeSheet } = useBottomSheetModal({ openOnMount: true });
+  const { sheetRef, isOpen, closeSheet } = useBottomSheetModal({
+    openOnMount: true,
+  });
   const [{ observations }] = React.useContext(ObservationsContext);
   const [config] = React.useContext(ConfigContext);
 
@@ -162,7 +164,11 @@ export const ProjectInviteModal = ({
   }, [fetchInviteDetails, inviteKey]);
 
   return (
-    <BottomSheetModal ref={sheetRef} onDismiss={navigation.goBack}>
+    <BottomSheetModal
+      ref={sheetRef}
+      isOpen={isOpen}
+      onDismiss={navigation.goBack}
+    >
       {status.type === "loading" ? (
         <Loading />
       ) : status.type === "error" ? (

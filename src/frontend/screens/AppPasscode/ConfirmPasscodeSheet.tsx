@@ -38,7 +38,9 @@ export const ConfirmPasscodeSheet = ({
 }: NativeRootNavigationProps<"ConfirmPasscodeSheet">) => {
   const { formatMessage: t } = useIntl();
   const { setAuthValues } = React.useContext(SecurityContext);
-  const { sheetRef } = useBottomSheetModal({ openOnMount: true });
+  const { sheetRef, isOpen } = useBottomSheetModal({
+    openOnMount: true,
+  });
   const { passcode } = route.params;
 
   function setPasscodeAndNavigateBack() {
@@ -47,7 +49,7 @@ export const ConfirmPasscodeSheet = ({
   }
 
   return (
-    <BottomSheetModal ref={sheetRef} onDismiss={() => {}}>
+    <BottomSheetModal ref={sheetRef} isOpen={isOpen}>
       <BottomSheetContent
         titleStyle={styles.text}
         descriptionStyle={styles.text}

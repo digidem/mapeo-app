@@ -138,6 +138,7 @@ const PhotosModal = ({
         renderTabBar={() => null}
       />
       <ConfirmDeleteModal
+        isOpen={isOpen}
         disableBackdrop={true}
         closeSheet={closeModal}
         sheetRef={sheetRef}

@@ -36,13 +36,13 @@ interface DeleteMapBottomSheetProps {
   mapName: string;
   mapId: string;
   closeSheet: () => void;
-  onHardwareBackPress: () => boolean;
+  isOpen: boolean;
 }
 
 export const DeleteMapBottomSheet = React.forwardRef<
   BottomSheetModalMethods,
   DeleteMapBottomSheetProps
->(({ mapName, closeSheet, mapId, onHardwareBackPress }, sheetRef) => {
+>(({ isOpen, mapName, closeSheet, mapId }, sheetRef) => {
   const { navigate } = useNavigationFromRoot();
   const { formatMessage: t } = useIntl();
   const { selectedStyleId, setSelectedStyleId } = useMapStyles();
@@ -68,11 +68,7 @@ export const DeleteMapBottomSheet = React.forwardRef<
   }
 
   return (
-    <BottomSheetModal
-      ref={sheetRef}
-      onDismiss={closeSheet}
-      onHardwareBackPress={onHardwareBackPress}
-    >
+    <BottomSheetModal ref={sheetRef} onDismiss={closeSheet} isOpen={isOpen}>
       <BottomSheetContent
         descriptionStyle={{ fontSize: 16 }}
         title={

@@ -56,7 +56,9 @@ export const JoinRequestModal = ({
 
   const [config] = React.useContext(ConfigContext);
 
-  const { sheetRef, closeSheet } = useBottomSheetModal({ openOnMount: true });
+  const { sheetRef, isOpen, closeSheet } = useBottomSheetModal({
+    openOnMount: true,
+  });
 
   const projectName = config.metadata.name;
   const deviceName = route.params?.deviceName || "";
@@ -77,7 +79,11 @@ export const JoinRequestModal = ({
   };
 
   return (
-    <BottomSheetModal ref={sheetRef} onDismiss={navigation.goBack}>
+    <BottomSheetModal
+      ref={sheetRef}
+      isOpen={isOpen}
+      onDismiss={navigation.goBack}
+    >
       {step === "prompt" ? (
         <BottomSheetContent
           buttonConfigs={[

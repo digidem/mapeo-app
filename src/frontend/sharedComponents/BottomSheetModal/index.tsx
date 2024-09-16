@@ -1,8 +1,11 @@
 import * as React from "react";
-import { BackHandler, useWindowDimensions } from "react-native";
+import {
+  BackHandler,
+  NativeEventSubscription,
+  useWindowDimensions,
+} from "react-native";
 import {
   BottomSheetModal as RNBottomSheetModal,
-  BottomSheetModalProvider,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
@@ -23,7 +26,7 @@ export const useBottomSheetModal = ({
 }) => {
   const initiallyOpenedRef = React.useRef(false);
   const sheetRef = React.useRef<RNBottomSheetModal>(null);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(openOnMount);
 
   const closeSheet = React.useCallback(() => {
     if (sheetRef.current) {
@@ -49,24 +52,27 @@ export const useBottomSheetModal = ({
   return { sheetRef, closeSheet, openSheet, isOpen };
 };
 
-const useBackPressHandler = (onHardwareBackPress?: () => void | boolean) => {
+// Handles cases where Android hardware backpress button is used to trigger navigation events
+// not covered by usePreventNavigationBack
+const useBackHandler = (enable: boolean, onBack?: () => void) => {
   React.useEffect(() => {
-    const onBack = () => {
-      if (onHardwareBackPress) {
-        const backPress = onHardwareBackPress();
-        if (typeof backPress === "boolean") {
-          return backPress;
+    let subscription: NativeEventSubscription;
+
+    if (enable) {
+      // This event is triggered by both Android hardware back press and gesture back swipe
+      subscription = BackHandler.addEventListener("hardwareBackPress", () => {
+        if (onBack) {
+          onBack();
         }
-      }
 
-      // We don't allow the back press to navigate/dismiss this modal by default
-      return true;
+        return true;
+      });
+    }
+
+    return () => {
+      if (subscription) subscription.remove();
     };
-
-    BackHandler.addEventListener("hardwareBackPress", onBack);
-
-    return () => BackHandler.removeEventListener("hardwareBackPress", onBack);
-  }, [onHardwareBackPress]);
+  }, [enable, onBack]);
 };
 
 const useSnapPointsCalculator = () => {
@@ -97,42 +103,42 @@ const useSnapPointsCalculator = () => {
 };
 
 interface Props extends React.PropsWithChildren<{}> {
-  onDismiss: () => void;
-  onHardwareBackPress?: () => void | boolean;
+  isOpen: boolean;
+  onDismiss?: () => void;
+  // Triggered by: Android hardware back press and gesture back swipe
+  onBack?: () => void;
   snapPoints?: (string | number)[];
   disableBackrop?: boolean;
 }
 
 export const BottomSheetModal = React.forwardRef<RNBottomSheetModal, Props>(
-  ({ children, onDismiss, onHardwareBackPress, disableBackrop }, ref) => {
-    useBackPressHandler(onHardwareBackPress);
+  ({ children, isOpen, onDismiss, onBack, disableBackrop }, ref) => {
+    useBackHandler(isOpen, onBack);
 
     const { snapPoints, updateSheetHeight } = useSnapPointsCalculator();
 
     return (
-      <BottomSheetModalProvider>
-        <RNBottomSheetModal
-          ref={ref}
-          backdropComponent={disableBackrop ? null : Backdrop}
-          enableContentPanningGesture={false}
-          enableHandlePanningGesture={false}
-          handleComponent={() => null}
-          index={0}
-          onDismiss={onDismiss}
-          snapPoints={snapPoints}
+      <RNBottomSheetModal
+        ref={ref}
+        backdropComponent={disableBackrop ? null : Backdrop}
+        enableContentPanningGesture={false}
+        enableHandlePanningGesture={false}
+        handleComponent={() => null}
+        index={0}
+        onDismiss={onDismiss}
+        snapPoints={snapPoints}
+      >
+        <BottomSheetView
+          onLayout={updateSheetHeight}
+          style={{
+            flex: 1,
+            paddingHorizontal: 20,
+            paddingTop: 30,
+          }}
         >
-          <BottomSheetView
-            onLayout={updateSheetHeight}
-            style={{
-              flex: 1,
-              paddingHorizontal: 20,
-              paddingTop: 30,
-            }}
-          >
-            {children}
-          </BottomSheetView>
-        </RNBottomSheetModal>
-      </BottomSheetModalProvider>
+          {children}
+        </BottomSheetView>
+      </RNBottomSheetModal>
     );
   }
 );

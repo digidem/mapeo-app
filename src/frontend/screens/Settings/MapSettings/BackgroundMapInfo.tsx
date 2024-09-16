@@ -204,8 +204,7 @@ export const BackgroundMapInfo = ({
         mapName={name}
         mapId={id}
         closeSheet={closeSheet}
-        // If open, hardware backpress returns true, which disables the back button and vice versa
-        onHardwareBackPress={() => isOpen}
+        isOpen={isOpen}
       />
     </View>
   );

@@ -13,6 +13,7 @@ import { ErrorIcon } from "../../sharedComponents/icons";
 
 interface ModalProps {
   sheetRef: React.RefObject<BottomSheetModalMethods>;
+  isOpen: boolean;
   photoIndex: number;
   closeSheet: () => void;
   disableBackdrop: boolean;
@@ -35,6 +36,7 @@ const m = defineMessages({
 
 export const ConfirmDeleteModal = ({
   sheetRef,
+  isOpen,
   photoIndex,
   closeSheet,
   disableBackdrop,
@@ -56,9 +58,10 @@ export const ConfirmDeleteModal = ({
   return (
     <BottomSheetModal
       ref={sheetRef}
+      isOpen={isOpen}
       disableBackrop={disableBackdrop}
       onDismiss={closeSheet}
-      onHardwareBackPress={closeSheet}
+      onBack={closeSheet}
     >
       <BottomSheetContent
         buttonConfigs={[
